@@ -2,6 +2,7 @@ Name: Anvi Aggarwal
 Registration No: 12016188
 
 **Q1. What is the Simple List Component in React?**
+
 Ans: The Simple List Component is a React Component which takes an array of items as a prop and renders an unordered list of those items with the option to select a single item from the list.
 Upon selection, the background color of the selected list item is set to green, to indicate current selection. The Simple List Component has two components namely WrappedSingleListItem and WrappedListComponent.
 The WrappedSingleListItem has four properties:
@@ -13,6 +14,7 @@ Whereas, the WrappedListComponent makes use of useState() and useEffect() hook t
 
 
 **Q2. What problems / warnings are there with code?**
+
 Ans:
 1. In the WrappedSingleListItem, the onClickHandler is not being invoked properly. Instead of being called when the list item is clicked, the onClickHandler is being called immediately when the component is rendered. The correct code should be:
 
@@ -35,22 +37,19 @@ WrappedSingleListItem.propTypes = {
 
 4. In the items.map() function, each child in a list should have a unique key prop. Also, the isSelected prop should be passed as a boolean, instead it is being passed as a selectedIndex state value. The correct code should be:
 
-```
-{items.map((item, index) => (
+`{items.map((item, index) => (
         <SingleListItem
-          key={index}`
+          key={index}
           onClickHandler={() => handleClick(index)}
           text={item.text}
           index={index}
           isSelected={index===selectedIndex}
         />
-      ))} 
-      ```
+      ))}`
 
 5. In the WrappedListComponent, the prop type for the items array is not defined correctly. Instead of PropTypes.array(PropTypes.shapeOf({...})), it should be PropTypes.arrayOf(PropTypes.shape({...})). The correct code should be:
 
-```
-WrappedListComponent.propTypes = {
+```WrappedListComponent.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     text: PropTypes.string.isRequired,
   })),
