@@ -1,6 +1,8 @@
 Name: Anvi Aggarwal
 Registration No: 12016188
 
+Pdf file link: https://docs.google.com/document/d/1xgYWflH2Ac4yQxwU1PjNOMtr1M7MZp_D9LdVHBBHuBU/edit?usp=sharing
+
 **Q1. What is the Simple List Component in React?**
 
 Ans: The Simple List Component is a React Component which takes an array of items as a prop and renders an unordered list of those items with the option to select a single item from the list.
