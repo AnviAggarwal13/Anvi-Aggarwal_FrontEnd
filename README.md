@@ -1,70 +1,144 @@
-# Getting Started with Create React App
+Name: Anvi Aggarwal
+Registration No: 12016188
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Q1. What is the Simple List Component in React?**
+Ans: The Simple List Component is a React Component which takes an array of items as a prop and renders an unordered list of those items with the option to select a single item from the list.
+Upon selection, the background color of the selected list item is set to green, to indicate current selection. The Simple List Component has two components namely WrappedSingleListItem and WrappedListComponent.
+The WrappedSingleListItem has four properties:
+-index: the index of the item in the items array
+-isSelected: a boolean that indicates whether the item is currently selected or not
+-onClickHandler: a callback function that gets called when the list item is clicked
+-text: the text content of the item
+Whereas, the WrappedListComponent makes use of useState() and useEffect() hook to set the color of the selected list item.
 
-## Available Scripts
 
-In the project directory, you can run:
+**Q2. What problems / warnings are there with code?**
+Ans:
+1. In the WrappedSingleListItem, the onClickHandler is not being invoked properly. Instead of being called when the list item is clicked, the onClickHandler is being called immediately when the component is rendered. The correct code should be:
 
-### `npm start`
+` onClick={()=>onClickHandler(index)}`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+2. The proptypes for index and isSelected should be isRequired as well. The correct code should be:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+WrappedSingleListItem.propTypes = {
+  index: PropTypes.number.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  onClickHandler: PropTypes.func.isRequired,
+  text: PropTypes.string.isRequired,
+};
+```
 
-### `npm test`
+3. Incorrect syntax of useState() hook. The useState() hook returns an array of two elements where the first element is the state value and the second element is a function to update the state value. The array elements need to be swapped. The correct code should be:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+`const [selectedIndex, setSelectedIndex] = useState(0);`
 
-### `npm run build`
+4. In the items.map() function, each child in a list should have a unique key prop. Also, the isSelected prop should be passed as a boolean, instead it is being passed as a selectedIndex state value. The correct code should be:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+{items.map((item, index) => (
+        <SingleListItem
+          key={index}`
+          onClickHandler={() => handleClick(index)}
+          text={item.text}
+          index={index}
+          isSelected={index===selectedIndex}
+        />
+      ))} 
+      ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+5. In the WrappedListComponent, the prop type for the items array is not defined correctly. Instead of PropTypes.array(PropTypes.shapeOf({...})), it should be PropTypes.arrayOf(PropTypes.shape({...})). The correct code should be:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
+WrappedListComponent.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.shape({
+    text: PropTypes.string.isRequired,
+  })),
+};
+```
 
-### `npm run eject`
+6. The items in WrappedListComponent.defaultProps cannot be null. They must have an array of elements. The correct code should be:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```
+WrappedListComponent.defaultProps = {
+items: [{text: "Anvi Aggarwal"}, {text: "12016188"}, {text: "B.Tech CSE"}, {text: "Frontend Assignment"}],
+y};;
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**Q3. Please fix, optimize, and/or modify the component as much as you think is necessary.**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Below is the fixed and optimized code:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```
+import React, { useState, useEffect, memo } from 'react';
+import PropTypes from 'prop-types';
 
-## Learn More
+// Single List Item
+const WrappedSingleListItem = ({
+  index,
+  isSelected,
+  onClickHandler,
+  text,
+}) => {
+  return (
+    <li
+      style={{ backgroundColor: isSelected ? 'green' : 'red'}}
+      onClick={()=>onClickHandler(index)}
+    >
+      {text}
+    </li>
+  );
+};
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+WrappedSingleListItem.propTypes = {
+  index: PropTypes.number.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  onClickHandler: PropTypes.func.isRequired,
+  text: PropTypes.string.isRequired,
+};
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+const SingleListItem = memo(WrappedSingleListItem);
 
-### Code Splitting
+// List Component
+const WrappedListComponent = ({
+  items,
+}) => {
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+  useEffect(() => {
+    setSelectedIndex(null);
+  }, [items]);
 
-### Analyzing the Bundle Size
+  const handleClick = index => {
+    setSelectedIndex(index);
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+  return (
+    <ul style={{ textAlign: 'left' }}>
+      {items.map((item, index) => (
+        <SingleListItem
+          key={index}
+          onClickHandler={() => handleClick(index)}
+          text={item.text}
+          index={index}
+          isSelected={index===selectedIndex}
+        />
+      ))}
+    </ul>
+  )
+};
 
-### Making a Progressive Web App
+WrappedListComponent.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.shape({
+    text: PropTypes.string.isRequired,
+  })),
+};
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+WrappedListComponent.defaultProps = {
+  items: [{text: "Anvi Aggarwal"}, {text: "12016188"}, {text: "B.Tech CSE"}, {text: "Frontend Assignment"}],
+};
 
-### Advanced Configuration
+const List = memo(WrappedListComponent);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+export default List;
+```
